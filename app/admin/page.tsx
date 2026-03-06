@@ -95,10 +95,6 @@ export default function AdminPage() {
           >
             Enter
           </button>
-          <p className="text-white/20 text-xs mt-4 text-center">
-            Default password: <code className="text-white/30">f1admin2026</code><br />
-            Set ADMIN_PASSWORD env var on Vercel to change it.
-          </p>
         </div>
       </div>
     );
