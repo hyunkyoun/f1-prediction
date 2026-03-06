@@ -1,14 +1,37 @@
 /**
  * Storage abstraction.
  * - Production (Vercel): uses @vercel/kv (Redis).
- * - Local dev (no KV env vars): uses an in-process Map — resets on server restart.
+ * - Local dev (no KV env vars): uses a JSON file at .data/store.json — persists across restarts.
  */
 import { Prediction, RaceResult } from './types';
+import * as fs from 'fs';
+import * as path from 'path';
 
 // ---------------------------------------------------------------------------
 // Low-level KV helpers
 // ---------------------------------------------------------------------------
-const memStore = new Map<string, string>();
+const DATA_FILE = path.join(process.cwd(), '.data', 'store.json');
+
+function readFileStore(): Record<string, string> {
+  try {
+    const dir = path.dirname(DATA_FILE);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    if (!fs.existsSync(DATA_FILE)) return {};
+    return JSON.parse(fs.readFileSync(DATA_FILE, 'utf-8'));
+  } catch {
+    return {};
+  }
+}
+
+function writeFileStore(store: Record<string, string>): void {
+  try {
+    const dir = path.dirname(DATA_FILE);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(DATA_FILE, JSON.stringify(store, null, 2), 'utf-8');
+  } catch (e) {
+    console.error('[storage] Failed to write local store:', e);
+  }
+}
 
 function isKvAvailable(): boolean {
   return !!(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
@@ -17,19 +40,27 @@ function isKvAvailable(): boolean {
 async function kvGet(key: string): Promise<string | null> {
   if (isKvAvailable()) {
     const { kv } = await import('@vercel/kv');
-    const val = await kv.get<string>(key);
-    return val ?? null;
+    const val = await kv.get(key);
+    if (val === null || val === undefined) return null;
+    // @vercel/kv auto-parses JSON, so val may already be a parsed object
+    if (typeof val === 'string') return val;
+    return JSON.stringify(val);
   }
-  return memStore.get(key) ?? null;
+
+  const store = readFileStore();
+  return store[key] ?? null;
 }
 
 async function kvSet(key: string, value: string): Promise<void> {
   if (isKvAvailable()) {
     const { kv } = await import('@vercel/kv');
     await kv.set(key, value);
-  } else {
-    memStore.set(key, value);
+    return;
   }
+
+  const store = readFileStore();
+  store[key] = value;
+  writeFileStore(store);
 }
 
 // ---------------------------------------------------------------------------
