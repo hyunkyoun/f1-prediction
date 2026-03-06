@@ -6,9 +6,9 @@ import { TOTAL_DRIVERS, TOP_ZONE_END, BOTTOM_ZONE_START } from './data';
  *
  * Scoring rules:
  *  - Top 5 (P1–P5):   1 point per exact position match
- *  - Bottom 5 (P18–P22): 1 point per exact position match
- *  - Bonus (P6–P17):  1 point if driver is at exactly that position
- *  - Max: 11 points per qualifying session
+ *  - Bottom 6 (P17–P22): 1 point per exact position match
+ *  - Bonus (P6–P16):  1 point if driver is at exactly that position
+ *  - Max: 12 points per qualifying session
  */
 export function calculateScore(prediction: Prediction, result: RaceResult): Score {
   const actual = result.order; // index 0 = P1, index 21 = P22
@@ -19,10 +19,10 @@ export function calculateScore(prediction: Prediction, result: RaceResult): Scor
     if (prediction.topFive[i] && actual[i] === prediction.topFive[i]) topFive++;
   }
 
-  // --- Bottom 5 (last 5 positions, indices 17–21) ---
+  // --- Bottom 6 (last 6 positions, indices 16–21) ---
   let bottomFive = 0;
-  const bottomStartIdx = BOTTOM_ZONE_START - 1; // index of P18 → 17
-  for (let i = 0; i < 5; i++) {
+  const bottomStartIdx = BOTTOM_ZONE_START - 1; // index of P17 → 16
+  for (let i = 0; i < 6; i++) {
     if (prediction.bottomFive[i] && actual[bottomStartIdx + i] === prediction.bottomFive[i]) {
       bottomFive++;
     }

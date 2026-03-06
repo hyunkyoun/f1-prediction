@@ -24,8 +24,8 @@ export interface Prediction {
   name: string;
   round: number;
   topFive: string[]; // 5 driver IDs for positions 1–5
-  bottomFive: string[]; // 5 driver IDs for the last 5 positions (18–22)
-  bonus: { driverId: string; position: number } | null; // position 6–17
+  bottomFive: string[]; // 6 driver IDs for the last 6 positions (17–22)
+  bonus: { driverId: string; position: number } | null; // position 6–16
   submittedAt: string;
 }
 

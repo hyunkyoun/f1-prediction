@@ -50,7 +50,7 @@ function DriverSelect({
 export function PredictionFormClient({ round, isPredictionOpen }: Props) {
   const [name, setName] = useState('');
   const [topFive, setTopFive] = useState<string[]>(['', '', '', '', '']);
-  const [bottomFive, setBottomFive] = useState<string[]>(['', '', '', '', '']);
+  const [bottomFive, setBottomFive] = useState<string[]>(['', '', '', '', '', '']);
   const [bonusDriver, setBonusDriver] = useState('');
   const [bonusPosition, setBonusPosition] = useState<string>('');
   const [submitting, setSubmitting] = useState(false);
@@ -94,7 +94,7 @@ export function PredictionFormClient({ round, isPredictionOpen }: Props) {
   async function handleSubmit() {
     setError('');
     if (!isComplete) {
-      setError('Please fill in your name, all Top 5, and all Bottom 5 picks.');
+      setError('Please fill in your name, all Top 5, and all Bottom 6 picks.');
       return;
     }
     if ((bonusDriver && !bonusPosition) || (!bonusDriver && bonusPosition)) {
@@ -182,10 +182,10 @@ export function PredictionFormClient({ round, isPredictionOpen }: Props) {
         </div>
       </div>
 
-      {/* Bottom 5 */}
+      {/* Bottom 6 */}
       <div>
         <div className="text-xs font-bold text-blue-400 uppercase tracking-wider mb-2">
-          Bottom 5 — Positions {BOTTOM_ZONE_START}–{TOTAL_DRIVERS}
+          Bottom 6 — Positions {BOTTOM_ZONE_START}–{TOTAL_DRIVERS}
         </div>
         <div className="space-y-1.5">
           {bottomFive.map((val, i) => (

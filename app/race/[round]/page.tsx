@@ -98,7 +98,7 @@ export default async function RacePage({ params }: Props) {
                       />
                       <span className="font-medium text-sm">{driverName(driverId)}</span>
                       {zone === 'top' && <span className="ml-auto text-[10px] text-[#e10600] font-bold">TOP 5</span>}
-                      {zone === 'bottom' && <span className="ml-auto text-[10px] text-blue-400 font-bold">BTM 5</span>}
+                      {zone === 'bottom' && <span className="ml-auto text-[10px] text-blue-400 font-bold">BTM 6</span>}
                       {zone === 'mid' && pos >= BONUS_MIN && pos <= BONUS_MAX && (
                         <span className="ml-auto text-[10px] text-white/20">BONUS ZONE</span>
                       )}
@@ -152,7 +152,7 @@ export default async function RacePage({ params }: Props) {
                     {score && (
                       <div className="flex gap-3 text-xs mb-3">
                         <span className="text-white/50">Top 5: <span className="text-white font-semibold">{score.topFive}/5</span></span>
-                        <span className="text-white/50">Btm 5: <span className="text-white font-semibold">{score.bottomFive}/5</span></span>
+                        <span className="text-white/50">Btm 6: <span className="text-white font-semibold">{score.bottomFive}/6</span></span>
                         <span className="text-white/50">Bonus: <span className="text-white font-semibold">{score.bonus}/1</span></span>
                       </div>
                     )}
@@ -182,9 +182,9 @@ export default async function RacePage({ params }: Props) {
                       </div>
                     </div>
 
-                    {/* Bottom 5 picks */}
+                    {/* Bottom 6 picks */}
                     <div className="mb-2">
-                      <div className="text-[10px] text-blue-400 font-bold uppercase mb-1.5">Bottom 5</div>
+                      <div className="text-[10px] text-blue-400 font-bold uppercase mb-1.5">Bottom 6</div>
                       <div className="flex flex-wrap gap-1.5">
                         {pred.bottomFive.map((dId, idx) => {
                           const actualPos = BOTTOM_ZONE_START + idx; // 18, 19, 20, 21, 22

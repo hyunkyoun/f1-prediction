@@ -54,13 +54,13 @@ export const RACES: Race[] = [
 
 // With 22 drivers:
 // Positions 1–5   → Top 5 zone
-// Positions 6–17  → Bonus zone
-// Positions 18–22 → Bottom 5 zone
+// Positions 6–16  → Bonus zone
+// Positions 17–22 → Bottom 6 zone
 export const TOTAL_DRIVERS = DRIVERS.length; // 22
 export const TOP_ZONE_END = 5;
-export const BOTTOM_ZONE_START = TOTAL_DRIVERS - 4; // 18
+export const BOTTOM_ZONE_START = TOTAL_DRIVERS - 5; // 17
 export const BONUS_MIN = TOP_ZONE_END + 1; // 6
-export const BONUS_MAX = BOTTOM_ZONE_START - 1; // 17
+export const BONUS_MAX = BOTTOM_ZONE_START - 1; // 16
 
 export function getDriver(id: string): Driver | undefined {
   return DRIVERS.find((d) => d.id === id);

@@ -76,8 +76,8 @@ export default async function HomePage() {
       <div className="mb-8 grid grid-cols-3 gap-3 text-sm">
         {[
           { icon: '🏆', label: 'Top 5', desc: 'Predict positions 1–5 in exact order' },
-          { icon: '💀', label: 'Bottom 5', desc: 'Predict positions 18–22 in exact order' },
-          { icon: '⭐', label: 'Bonus', desc: 'Pick one driver in P6–P17 at exact position' },
+          { icon: '💀', label: 'Bottom 6', desc: 'Predict positions 17–22 in exact order' },
+          { icon: '⭐', label: 'Bonus', desc: 'Pick one driver in P6–P16 at exact position' },
         ].map((tip) => (
           <div key={tip.label} className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg p-3">
             <div className="text-xl mb-1">{tip.icon}</div>
