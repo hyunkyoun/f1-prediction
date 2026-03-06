@@ -1,10 +1,9 @@
 'use client';
 
 import { useState, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
 function AccessForm() {
-  const router       = useRouter();
   const searchParams = useSearchParams();
   const from         = searchParams.get('from') ?? '/';
 
@@ -33,7 +32,7 @@ function AccessForm() {
       if (!res.ok) {
         setError(data.error ?? 'Incorrect code. Try again.');
       } else {
-        router.push(from);
+        window.location.href = from;
       }
     } catch {
       setError('Network error. Please try again.');
