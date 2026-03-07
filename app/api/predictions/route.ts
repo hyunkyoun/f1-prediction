@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAllPredictions, savePrediction } from '@/lib/storage';
-import { RACES, DRIVERS, BONUS_MIN, BONUS_MAX, TOP_ZONE_END, BOTTOM_ZONE_START } from '@/lib/data';
+import { RACES, DRIVERS, BONUS_MIN, BONUS_MAX, TOP_ZONE_END, BOTTOM_ZONE_START, TOTAL_DRIVERS } from '@/lib/data';
 import { Prediction } from '@/lib/types';
 
 // GET /api/predictions?round=1
@@ -28,8 +28,9 @@ export async function POST(req: NextRequest) {
   if (!Array.isArray(topFive) || topFive.length !== TOP_ZONE_END) {
     return NextResponse.json({ error: 'topFive must have 5 entries' }, { status: 400 });
   }
-  if (!Array.isArray(bottomFive) || bottomFive.length !== 5) {
-    return NextResponse.json({ error: 'bottomFive must have 5 entries' }, { status: 400 });
+  const bottomZoneSize = TOTAL_DRIVERS - BOTTOM_ZONE_START + 1;
+  if (!Array.isArray(bottomFive) || bottomFive.length !== bottomZoneSize) {
+    return NextResponse.json({ error: `bottomFive must have ${bottomZoneSize} entries` }, { status: 400 });
   }
 
   const driverIds = new Set(DRIVERS.map((d) => d.id));
