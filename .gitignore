@@ -43,3 +43,5 @@ next-env.d.ts
 # local dev data store
 /.data
 .env*.local
+
+/.claude
