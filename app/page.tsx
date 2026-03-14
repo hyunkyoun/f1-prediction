@@ -4,7 +4,8 @@ import { getResult } from '@/lib/storage';
 
 export const dynamic = 'force-dynamic';
 
-function getRaceStatus(race: { qualDate: string }, hasResult: boolean) {
+function getRaceStatus(race: { qualDate: string; cancelled?: boolean }, hasResult: boolean) {
+  if (race.cancelled) return 'cancelled';
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const qual = new Date(race.qualDate);
@@ -17,17 +18,19 @@ function getRaceStatus(race: { qualDate: string }, hasResult: boolean) {
 }
 
 const STATUS_STYLES = {
-  results: 'bg-green-900/40 text-green-400 border-green-700/40',
-  closed:  'bg-white/5 text-white/30 border-white/10',
-  today:   'bg-yellow-900/40 text-yellow-400 border-yellow-700/40',
-  open:    'bg-blue-900/40 text-blue-400 border-blue-700/40',
+  results:   'bg-green-900/40 text-green-400 border-green-700/40',
+  closed:    'bg-white/5 text-white/30 border-white/10',
+  today:     'bg-yellow-900/40 text-yellow-400 border-yellow-700/40',
+  open:      'bg-blue-900/40 text-blue-400 border-blue-700/40',
+  cancelled: 'bg-red-900/40 text-red-400 border-red-700/40',
 };
 
 const STATUS_LABELS = {
-  results: 'Results in',
-  closed:  'Closed',
-  today:   'Today — Predict!',
-  open:    'Open',
+  results:   'Results in',
+  closed:    'Closed',
+  today:     'Today — Predict!',
+  open:      'Open',
+  cancelled: 'Cancelled',
 };
 
 export default async function HomePage() {
@@ -41,7 +44,7 @@ export default async function HomePage() {
   const hasResultMap = Object.fromEntries(resultChecks.map((r) => [r.round, r.hasResult]));
 
   const now = new Date();
-  const nextRace = RACES.find((r) => new Date(r.raceDate) >= now) ?? RACES[RACES.length - 1];
+  const nextRace = RACES.find((r) => !r.cancelled && new Date(r.raceDate) >= now) ?? RACES.filter((r) => !r.cancelled).at(-1)!;
 
   return (
     <div>
@@ -51,7 +54,7 @@ export default async function HomePage() {
           <span className="text-[#e10600]">2026</span> F1 Season
         </h1>
         <p className="text-white/50 text-sm">
-          Predict qualifying order · Max 11 pts per round · No account needed
+          Predict qualifying order · Max 11 pts per round
         </p>
       </div>
 
@@ -92,16 +95,13 @@ export default async function HomePage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {RACES.map((race) => {
           const status = getRaceStatus(race, hasResultMap[race.round]);
-          return (
-            <Link
-              key={race.round}
-              href={`/race/${race.round}`}
-              className="group block bg-[#1a1a1a] border border-[#2a2a2a] hover:border-[#444] rounded-xl p-4 transition-all"
-            >
+          const isCancelled = race.cancelled;
+          const cardContent = (
+            <>
               <div className="flex items-start justify-between mb-3">
-                <span className="text-2xl">{race.flag}</span>
+                <span className={`text-2xl ${isCancelled ? 'opacity-40' : ''}`}>{race.flag}</span>
                 <div className="flex items-center gap-1.5">
-                  {race.sprint && (
+                  {race.sprint && !isCancelled && (
                     <span className="text-[10px] font-bold bg-orange-500/20 text-orange-400 border border-orange-500/30 px-1.5 py-0.5 rounded">
                       SPRINT
                     </span>
@@ -113,15 +113,38 @@ export default async function HomePage() {
               </div>
 
               <div className="text-xs text-white/40 mb-0.5">Round {race.round}</div>
-              <div className="font-semibold text-white group-hover:text-[#e10600] transition-colors leading-snug">
+              <div className={`font-semibold leading-snug ${isCancelled ? 'text-white/30 line-through' : 'text-white group-hover:text-[#e10600] transition-colors'}`}>
                 {race.name}
               </div>
-              <div className="text-xs text-white/40 mt-1">{race.circuit}</div>
-              <div className="text-xs text-white/30 mt-2">
-                Qual: {new Date(race.qualDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                {' · '}
-                Race: {new Date(race.raceDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+              <div className={`text-xs mt-1 ${isCancelled ? 'text-white/20' : 'text-white/40'}`}>{race.circuit}</div>
+              {!isCancelled && (
+                <div className="text-xs text-white/30 mt-2">
+                  Qual: {new Date(race.qualDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                  {' · '}
+                  Race: {new Date(race.raceDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                </div>
+              )}
+            </>
+          );
+
+          if (isCancelled) {
+            return (
+              <div
+                key={race.round}
+                className="block bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-4 opacity-60 cursor-not-allowed"
+              >
+                {cardContent}
               </div>
+            );
+          }
+
+          return (
+            <Link
+              key={race.round}
+              href={`/race/${race.round}`}
+              className="group block bg-[#1a1a1a] border border-[#2a2a2a] hover:border-[#444] rounded-xl p-4 transition-all"
+            >
+              {cardContent}
             </Link>
           );
         })}

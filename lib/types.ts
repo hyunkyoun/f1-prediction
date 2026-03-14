@@ -18,6 +18,7 @@ export interface Race {
   qualDate: string; // YYYY-MM-DD (Saturday qualifying)
   raceDate: string; // YYYY-MM-DD
   sprint: boolean;
+  cancelled?: boolean;
 }
 
 export interface Prediction {

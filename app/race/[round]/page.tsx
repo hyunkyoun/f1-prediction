@@ -15,6 +15,22 @@ export default async function RacePage({ params }: Props) {
   const race = getRace(round);
   if (!race) notFound();
 
+  if (race.cancelled) {
+    return (
+      <div className="max-w-2xl mx-auto py-20 text-center">
+        <div className="text-5xl mb-4">{race.flag}</div>
+        <h1 className="text-2xl font-bold mb-2">{race.name}</h1>
+        <p className="text-white/40 text-sm mb-6">{race.circuit} · Round {race.round}</p>
+        <div className="inline-block bg-red-900/30 border border-red-700/40 text-red-400 font-semibold px-6 py-3 rounded-xl text-sm mb-6">
+          This race has been cancelled
+        </div>
+        <div>
+          <Link href="/" className="text-white/40 hover:text-white text-sm transition-colors">← Back to calendar</Link>
+        </div>
+      </div>
+    );
+  }
+
   const [predictions, result] = await Promise.all([
     getAllPredictions(round),
     getResult(round),
